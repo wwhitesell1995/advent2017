@@ -37,10 +37,10 @@ defmodule BlockInBanks do
     end
   end
 
-    def find_cycle_until_same() do
-      sheet= File.read!("input6.txt")
-      numarray=strtonumarray(sheet)
-      num_cycles=same_blocks(numarray, 1)
-      num_cycles
-    end
+  def find_cycle_until_same() do
+    sheet= File.read!("input6.txt")
+    numarray=strtonumarray(sheet)
+    num_cycles=same_blocks(numarray, 1)
+    num_cycles
+  end
 end

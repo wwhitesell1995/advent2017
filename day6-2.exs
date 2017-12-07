@@ -38,14 +38,14 @@ defmodule BlockInBanks do
     end
   end
 
-    def find_cycle_until_same() do
-      sheet= File.read!("input6.txt")
-      numarray=strtonumarray(sheet)
-      num_blocks=same_blocks(numarray, 1)
-      blocks=elem(num_blocks,0)
-      updated_blocks=elem(num_blocks,1)
-      num_cycles=Enum.find(blocks,fn(x)->elem(x,0)===updated_blocks end)
-      num_iterations=elem(num_cycles,1)+1
-      num_iterations
-    end
+  def find_cycle_until_same() do
+    sheet= File.read!("input6.txt")
+    numarray=strtonumarray(sheet)
+    num_blocks=same_blocks(numarray, 1)
+    blocks=elem(num_blocks,0)
+    updated_blocks=elem(num_blocks,1)
+    num_cycles=Enum.find(blocks,fn(x)->elem(x,0)===updated_blocks end)
+    num_iterations=elem(num_cycles,1)+1
+    num_iterations
+  end
 end
