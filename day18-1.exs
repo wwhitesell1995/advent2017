@@ -24,7 +24,7 @@ defmodule Duet do
                      do_command(command,incrementor,duet_map,is_numeric)
                      end
 
-    incrementor=elem(executed_command,0)|>IO.inspect
+    incrementor=elem(executed_command,0)
     duet_map=elem(executed_command,1)
     prev_map=if(elem(command,0) == "snd" ) do elem(executed_command,2) else prev_map end
     do_commands(command_list,incrementor,max,duet_map,prev_map)
@@ -96,7 +96,7 @@ defmodule Duet do
   def do_command({command,x,_},incrementor, duet_map, prev_map) when command=="rcv" do
      play_val=Map.get(prev_map,x)
      if (play_val>0) do
-       #IO.puts(play_val)
+       IO.puts(play_val)
       {incrementor+1,duet_map}
      else
       {incrementor+1,duet_map}
