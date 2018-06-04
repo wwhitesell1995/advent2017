@@ -1,14 +1,14 @@
 use std::fs::File;
 use std::io::prelude::*;
 
-#[derive(Clone)]
+#[derive(Clone, PartialEq, PartialOrd)]
 struct Program
 {
     name: String,
     weight: i32,
 }
 
-#[derive(Clone)]
+#[derive(Clone, PartialEq, PartialOrd)]
 struct ProgramsLink
 {
     parent: Program,
@@ -22,6 +22,8 @@ fn main() {
     let programs=format_programs(&contents);
     let program_links=format_program_links(&contents, &programs);
     let program_root=get_program_root(&program_links);
+    let correct_weight=find_imbalanced_branch(0, &program_root, &program_links);
+    println!("The corrected weight is {0}", correct_weight);
 }
 
 
@@ -77,6 +79,11 @@ fn find_program(program_name: String, programs: &Vec<Program>)->Option<&Program>
   programs.iter().find(|&p| p.name == program_name)
 }
 
+fn find_program_link<'a>(program: &Program, programlinks: &'a Vec<ProgramsLink>)->Option<&'a ProgramsLink>
+{
+    programlinks.iter().find(|&p| p.parent == *program)
+}
+
 //Gets the list of programs and their weights
 fn format_programs(contents: &str)->Vec<Program>
 {
@@ -119,8 +126,7 @@ fn format_program_links(contents: &str, programs: &Vec<Program>)->Vec<ProgramsLi
 //Gets the root of the programs with its weight.
 fn get_program_root(programlinks: &Vec<ProgramsLink>)->Program
 {
-    let none="";
-    let mut programroot=Program{name: none.to_string(), weight:0};
+    let mut programroot=Program{name: String::new(), weight:0};
     for programlink in programlinks.iter()
     {
         programroot=programlink.parent.clone();
@@ -139,6 +145,48 @@ fn get_program_root(programlinks: &Vec<ProgramsLink>)->Program
     }
 
     programroot
+}
+
+fn find_branch_weight(programroot: &Program, programlinks: &Vec<ProgramsLink>)->i32
+{
+    let program_root_children=find_program_link(programroot, programlinks).unwrap();
+    let children_weight: i32=program_root_children.child.iter().map(|child|{find_branch_weight(child, programlinks)}).sum();
+    programroot.weight+children_weight
+}
+
+fn find_imbalanced_branch(differenceweight: i32, programroot: &Program, programlinks: &Vec<ProgramsLink>)->i32
+{
+    let program_root_children=find_program_link(programroot, programlinks).unwrap();
+    let mut imbalance_weight=0;
+    let mut imbalanced_child=programroot;
+    let mut is_imbalanced=false;
+    let mut programweights=Vec::new();
+
+    for children in program_root_children.child.iter()
+    {
+        let branch_weight=find_branch_weight(children, programlinks);
+        programweights.push(branch_weight);
+    }
+
+    for children in program_root_children.child.iter()
+    {
+        let branch_weight=find_branch_weight(children, programlinks);
+        if programweights.iter().filter(|&n| *n == branch_weight).count()==1
+        {
+            is_imbalanced=true;
+            imbalanced_child=children;
+            imbalance_weight=programweights.iter().filter(|&n| *n != branch_weight).nth(0).unwrap()-branch_weight;
+        }
+    }
+
+    if is_imbalanced
+    {
+        find_imbalanced_branch(imbalance_weight, imbalanced_child, programlinks)
+    }
+    else
+    {
+        programroot.weight+differenceweight
+    }
 }
 
 //Tests the find program function
