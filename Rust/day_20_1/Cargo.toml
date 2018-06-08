@@ -1,0 +1,6 @@
+[package]
+name = "day_20_1"
+version = "0.1.0"
+authors = ["wwhitesell1995 <whitesell1995@gmail.com>"]
+
+[dependencies]
