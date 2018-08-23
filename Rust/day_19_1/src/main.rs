@@ -44,7 +44,7 @@ fn get_letters(routing_diagram: &Vec<Vec<&str>>) -> String {
     while keep_following {
         let curr_x_usize = curr_x as usize;
         let curr_y_usize = curr_y as usize;
-        println!("{:?}", routing_diagram[curr_y_usize][curr_x_usize]);
+
         if is_verticle {
             let is_letter = routing_diagram[curr_y_usize][curr_x_usize] != "|"
                 && routing_diagram[curr_y_usize][curr_x_usize] != "-"
