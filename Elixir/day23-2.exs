@@ -16,7 +16,6 @@ defmodule Coprocessor do
   end
 
   def do_commands(command_list, incrementor, max, coprocessor_map, prev_map, mul_count, b, c) when c<=b do
-    IO.inspect(coprocessor_map)
     command=Enum.at(command_list,incrementor)
     is_numeric=is_numeric(elem(command,2))
     executed_command=if(elem(command,0) == "snd" or elem(command,0) == "rcv") do
@@ -36,7 +35,7 @@ defmodule Coprocessor do
   end
 
   def do_commands(_, _, _, _, _, _, b, c) when c>b do
-    {b, c}
+    {b, c+1}
   end
 
   def do_command({command,x,y},incrementor, coprocessor_map, is_numeric, mul_count) when command=="set" and is_numeric do
@@ -156,15 +155,13 @@ end
 
   def find_h({b, c}, h, is_prime) when b<c and is_prime do
     b=b+17
-    IO.inspect(b)
     is_prime=is_prime(b)
-    h=h+1
     find_h({b,c}, h, is_prime)
   end
 
   def find_h({b, c}, h, is_prime) when b<c and not is_prime do
     b=b+17
-    IO.inspect(b)
+    h=h+1
     is_prime=is_prime(b)
     find_h({b,c}, h, is_prime)
   end
@@ -186,7 +183,6 @@ end
     command_list=strtoarray(sheet)
     coprocessor_map=create_register(command_list)
     b_and_c=do_commands(command_list,0,Enum.count(command_list),coprocessor_map,%{},0, 0, 0)
-    IO.inspect(b_and_c)
     is_prime_b=is_prime(elem(b_and_c,0))
     h=find_h(b_and_c, 0, is_prime_b)
     h

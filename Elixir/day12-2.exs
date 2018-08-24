@@ -53,8 +53,7 @@ defmodule DigitalPlumber do
     groups
   end
 
-  def do_the_plumbing() do
-      sheet= File.read!("input12.txt")
+  def do_the_plumbing(sheet) do
       numarray=strtonumarray(sheet)
       maplist=Enum.map(numarray, fn(x)->list_to_map(x) end)
       map=%{}
@@ -63,5 +62,10 @@ defmodule DigitalPlumber do
       groups=get_groups(range,[],[],map)
       groupsize=Enum.count(groups)
       groupsize
+  end
+  
+  def execute_plumbing() do
+    sheet= File.read!("input12.txt")
+    do_the_plumbing(sheet)
   end
 end
