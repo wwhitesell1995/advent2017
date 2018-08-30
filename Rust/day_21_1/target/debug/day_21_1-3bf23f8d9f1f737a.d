@@ -1,0 +1,1 @@
+/home/tyler/Documents/AdventOfCode/Rust/day_21_1/target/debug/day_21_1-3bf23f8d9f1f737a: /home/tyler/Documents/AdventOfCode/Rust/day_21_1/src/tests.rs /home/tyler/Documents/AdventOfCode/Rust/day_21_1/src/main.rs
