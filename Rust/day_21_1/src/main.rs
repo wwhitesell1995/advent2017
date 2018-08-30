@@ -21,7 +21,10 @@ fn main() {
     let contents = read_file_to_string(filename.to_string());
     let rulebook = get_rulebook(&contents);
     let num_pixels_on = get_num_pixels_on(&starting_pattern, &rulebook, 5);
-    println!("{:?}", num_pixels_on);
+    println!(
+        "The number of pixels that are on after 5 iterations is: {0}",
+        num_pixels_on
+    );
 }
 
 //Returns a string from a file

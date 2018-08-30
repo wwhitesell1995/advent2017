@@ -75,7 +75,6 @@ fn get_num_bursts_infected(node_grid: &Vec<Vec<&str>>) -> i32 {
     let mut curr_y = start_point[1] as i32;
 
     for _i in 0..10000 {
-        let mut was_infected = false;
         let curr_x_usize = curr_x as usize;
         let curr_y_usize = curr_y as usize;
 
@@ -88,7 +87,7 @@ fn get_num_bursts_infected(node_grid: &Vec<Vec<&str>>) -> i32 {
                 curr_direction += num_states;
             }
 
-            was_infected = true;
+            num_infected += 1;
             burst_grid[curr_y_usize][curr_x_usize] = "#";
         }
 
@@ -103,9 +102,7 @@ fn get_num_bursts_infected(node_grid: &Vec<Vec<&str>>) -> i32 {
             curr_y += 1
         }
 
-        if was_infected {
-            num_infected += 1;
-        }
+
     }
 
     num_infected
