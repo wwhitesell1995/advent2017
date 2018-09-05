@@ -8,38 +8,26 @@ defmodule PacketScanners do
     rowsoftuples
   end
 
-  def insert_prev_no(decrementor, scanner, prev_no) when decrementor>0 do
-    scanner=Map.put_new(scanner, prev_no, [{0,0}])
-    insert_prev_no(decrementor-1, scanner, prev_no+1)
+  def traverse_scanner([n|range], prev_n, severity, curr_severity) when curr_severity==0 do
+    severity=severity+elem(prev_n,0)*elem(prev_n,1)
+    curr_severity=rem(elem(n, 0), (2*(elem(n,1)-1)))
+    prev_n=n
+    traverse_scanner(range, prev_n, severity, curr_severity)
   end
 
-  def insert_prev_no(decrementor,scanner,_) when decrementor<=0 do
-    scanner
+  def traverse_scanner([n|range], _prev_n, severity, curr_severity) when curr_severity>0 do
+    curr_severity=rem(elem(n, 0), (2*(elem(n,1)-1)))
+    prev_n=n
+    traverse_scanner(range, prev_n, severity, curr_severity)
   end
 
-  def traverse_scanner(scanner,[n|range],state,severity) when state==="forward" do
-
-
-
-  end
-
-  def create_initial_scan([n|numlist], scanner, prev_no) do
-    scanner=if(elem(n,0)>prev_no) do insert_prev_no(elem(n,0)-prev_no,scanner,prev_no) else scanner end
-    prev_no=if(elem(n,0)>prev_no) do elem(n,0) else prev_no end
-
-    scanner=Map.put_new(scanner,elem(n,0),List.replace_at(List.duplicate({0,0},elem(n,1)),0,{"S", 0}))
-    create_initial_scan(numlist,scanner, prev_no+1)
-  end
-
-  def create_initial_scan([], scanner, _) do
-    scanner
+  def traverse_scanner([], _, severity, _) do
+    severity 
   end
 
   def do_traversal() do
     sheet= File.read!("input13.txt")
     numarray=strtonumarray(sheet)
-    scanner=create_initial_scan(numarray,%{}, 0)
-    range=elem(List.first(numarray),0)..elem(List.last(numarray),0)|>Enum.to_list()
-    traverse_scanner(scanner,range,"forward",0)
+    traverse_scanner(numarray, {1,1}, 0, 1)
   end
 end
