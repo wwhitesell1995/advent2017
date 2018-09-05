@@ -11,14 +11,12 @@ defmodule PacketScanners do
   def traverse_scanner([n|range], prev_n, severity, curr_severity) when curr_severity==0 do
     severity=severity+elem(prev_n,0)*elem(prev_n,1)
     curr_severity=rem(elem(n, 0), (2*(elem(n,1)-1)))
-    prev_n=n
-    traverse_scanner(range, prev_n, severity, curr_severity)
+    traverse_scanner(range, n, severity, curr_severity)
   end
 
   def traverse_scanner([n|range], _prev_n, severity, curr_severity) when curr_severity>0 do
     curr_severity=rem(elem(n, 0), (2*(elem(n,1)-1)))
-    prev_n=n
-    traverse_scanner(range, prev_n, severity, curr_severity)
+    traverse_scanner(range, n, severity, curr_severity)
   end
 
   def traverse_scanner([], _, severity, _) do
