@@ -1,5 +1,6 @@
 use std::fs::File;
 use std::io::prelude::*;
+use std::collections::HashMap;
 
 fn main() {
     let filename = "day22_2_input.txt";
@@ -22,8 +23,9 @@ fn read_file_to_string(filename: String) -> String {
 }
 
 //Gets the grid of infected nodes from a string.
-fn get_node_grid(contents: &str) -> Vec<Vec<&str>> {
-
+fn get_node_grid(contents: &str) -> HashMap<[usize; 2], &str> {
+    let mut grid: HashMap<[usize; 2], &str> = HashMap::new();
+    let mid_point=[5000000, 5000000];
     let mut row_length = 0;
     let mut col_length = 0;
 
@@ -36,14 +38,12 @@ fn get_node_grid(contents: &str) -> Vec<Vec<&str>> {
         col_length += 1;
     }
 
-    let mut grid = vec![vec!["."; row_length]; col_length];
-    let mid_point = get_mid_point(&grid);
-    let mut curr_row = mid_point[1] - (col_length / 2);
+    let mut curr_row = mid_point[1]-(col_length / 2);
 
     for line in contents.lines() {
         let mut curr_col = mid_point[0] - (row_length / 2);
         for c in 0..line.len() {
-            grid[curr_row][curr_col] = &line[c..c + 1];
+            grid.insert([curr_row, curr_col].clone(), &line[c..c + 1]);
             curr_col += 1;
         }
         curr_row += 1;
@@ -51,23 +51,12 @@ fn get_node_grid(contents: &str) -> Vec<Vec<&str>> {
     grid
 }
 
-//Gets the midpoint of the grid
-fn get_mid_point(node_grid: &Vec<Vec<&str>>) -> Vec<usize> {
-    let mid_point_grid = node_grid.clone();
-    let mid_point = vec![
-        (mid_point_grid[0].len() / 2) as usize,
-        (mid_point_grid.len() / 2) as usize,
-    ];
-
-    mid_point
-}
-
 //Gets the numbers of bursts that infect a node that did not begin infected.
-fn get_num_bursts_infected(node_grid: &Vec<Vec<&str>>) -> i32 {
+fn get_num_bursts_infected(node_grid: &HashMap<[usize; 2], &str>) -> i32 {
     let mut num_infected = 0;
     let mut burst_grid = node_grid.clone();
 
-    let start_point = get_mid_point(&burst_grid);
+    let start_point = [5000000, 5000000];
     let states = vec!["left", "up", "right", "down"];
     let num_states = states.len() as i32;
 
@@ -75,23 +64,34 @@ fn get_num_bursts_infected(node_grid: &Vec<Vec<&str>>) -> i32 {
     let mut curr_x = start_point[0] as i32;
     let mut curr_y = start_point[1] as i32;
 
-    for _i in 0..10000 {
+    for _i in 0..10000000 {
 
         let curr_x_usize = curr_x as usize;
         let curr_y_usize = curr_y as usize;
+        burst_grid.entry([curr_y_usize, curr_x_usize]).or_insert(".");
 
-        if burst_grid[curr_y_usize][curr_x_usize] == "#" {
-            curr_direction += 1;
-            burst_grid[curr_y_usize][curr_x_usize] = ".";
-        } else {
+        if burst_grid[&[curr_y_usize, curr_x_usize]] == "."  {
             curr_direction -= 1;
             if curr_direction < 0 {
                 curr_direction += num_states;
             }
 
-            num_infected += 1;
-            burst_grid[curr_y_usize][curr_x_usize] = "#";
+            burst_grid.insert([curr_y_usize, curr_x_usize], "W");
         }
+        else if burst_grid[&[curr_y_usize, curr_x_usize]] == "W"
+        {
+           num_infected += 1;
+           burst_grid.insert([curr_y_usize, curr_x_usize], "#");
+        }
+        else if burst_grid[&[curr_y_usize, curr_x_usize]] == "#" {
+            curr_direction += 1;
+            burst_grid.insert([curr_y_usize, curr_x_usize], "F");
+        }
+        else if burst_grid[&[curr_y_usize, curr_x_usize]] == "F"  {
+            curr_direction += 2;
+            burst_grid.insert([curr_y_usize, curr_x_usize], ".");
+        }
+
 
         let curr_index = (curr_direction % num_states) as usize;
         if states[curr_index] == "left" {
@@ -102,34 +102,6 @@ fn get_num_bursts_infected(node_grid: &Vec<Vec<&str>>) -> i32 {
             curr_y -= 1;
         } else if states[curr_index] == "down" {
             curr_y += 1;
-        }
-
-        if curr_y>(burst_grid.len()-1) as i32
-        {
-            burst_grid.push(vec!["."; node_grid[0].len()]);
-        }
-        
-        if curr_y<0
-        {
-            curr_y=0;
-            burst_grid.insert(0, vec!["."; node_grid[0].len()]);
-        }
-
-        if curr_x>(burst_grid[curr_y_usize].len()-1) as i32
-        {
-           for i in 0..burst_grid.len()
-           {
-             burst_grid[i].push(".");
-           }
-        }
-
-        if curr_x<0
-        {
-           curr_x=0;
-           for i in 0..burst_grid.len()
-           {
-              burst_grid[i].insert(0, ".");
-           }
         }
     }
 
