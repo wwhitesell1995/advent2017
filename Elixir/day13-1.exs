@@ -19,7 +19,12 @@ defmodule PacketScanners do
     traverse_scanner(range, n, severity, curr_severity)
   end
 
-  def traverse_scanner([], _, severity, _) do
+  def traverse_scanner([], prev_n, severity, curr_severity) when curr_severity==0 do
+    severity=severity+elem(prev_n,0)*elem(prev_n,1)
+    severity 
+  end
+
+  def traverse_scanner([], _, severity, curr_severity) when curr_severity>0 do
     severity 
   end
 
